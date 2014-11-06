@@ -1,0 +1,9 @@
+/*******************************
+ *
+ *    File: keywords.txt
+ *    Description: Syntax highlighting for the Arduino IDE
+ *    Author: VINICIUS M CORNIERI
+ * 
+ ******************************/
+
+Hero KEYWORD1
