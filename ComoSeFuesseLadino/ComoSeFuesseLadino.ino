@@ -4,7 +4,7 @@
 #include "avr/pgmspace.h"
 #include "fontRL.h"
 #include "map.h"
-#include "IA.h"
+#include "hero.h"
 
 SNESpaduino player1(20, 21, 19);
 
@@ -363,7 +363,7 @@ void bilheteria_monstros(){
 void IA1Monsters(Hero m) {
   
     if(distance(m.POS, hero.POS) == 1) {
-      if(!is_in_cam(m.POS.j, m.POS.i) && !canSee(hero.POS.i, hero.POS.j, m.POS.i, m.POS.j)) {
+      if(is_in_cam(m.POS.j, m.POS.i) && !canSee(hero.POS.i, hero.POS.j, m.POS.i, m.POS.j)) {
         if(m.POS.i == hero.POS.i) {
           if (m.POS.j < hero.POS.j)
             m.POS.d = RIGHT;

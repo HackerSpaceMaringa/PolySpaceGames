@@ -1,10 +1,13 @@
 #include "hero.h"
+
+Position camH;
+Position camV;
 //Construtor Hero
 Hero::Hero(int h_class) {
     POS.i = 20;
     POS.j = 20;
     POS.d = 0;
-    
+    KILLS = 0;
     ATK = 0;
     HERO_CLASS = h_class;
     if(HERO_CLASS==RANGER){
@@ -19,7 +22,7 @@ Hero::Hero(int h_class) {
         ATK++;
     }
 
-    TKT = 0;
+    TKT = TICKET - SPD;
     ATK++;
     LVL = 1;
     
@@ -32,7 +35,7 @@ Hero::Hero() {
     HERO_CLASS = BARBARIAN;
     
     ATK = 0;
-    
+    KILLS = 0;
     if(HERO_CLASS==RANGER){
         SPD = SPD_RANGER;
         HP  = R_INIT_HP;
@@ -45,25 +48,28 @@ Hero::Hero() {
         ATK++;
     }
 
-    TKT = 0;
+    TKT = TICKET - SPD;;
     ATK++;
     LVL = 1;
     
 }
 
-/*void moviment(Hero hero, byte direction)
-{
-    if(direction==UP)
-    {
+int has_monster(int x, int y){
+  for(int i = 0; i< num_monster; i++){
+    if(monsters[i].POS.i == x && monsters[i].POS.j == y){
+      return 1;
     }
-    else if(direction==DOWN)
-    {
+  }
+  return 0;
+}
+
+Hero* get_monster(int x, int y){
+  for(int i = 0; i< num_monster; i++){
+    if(monsters[i].POS.i == x && monsters[i].POS.j == y){
+      return &monsters[i];
     }
-    else if(direction==LEFT)
-    {
-    }
-    else if(direction==RIGHT)
-    {
-    }
-    
-}*/
+  }
+  return NULL;
+}
+Hero hero(1);
+Hero monsters[100];

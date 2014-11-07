@@ -23,6 +23,9 @@
 #define LEFT          3  
 #define RIGHT         4 
 
+#define num_monster   30
+
+#define TICKET        10
 class Position
 {
     public:
@@ -35,7 +38,7 @@ class Hero
 {
     public:
         Position POS;
-        int HP, ATK, HERO_CLASS, LVL, SPD, TKT;
+        int HP, ATK, HERO_CLASS, LVL, SPD, TKT, KILLS;
         Hero(int);
         Hero();
         
@@ -45,6 +48,23 @@ class Hero
             POS.j = y;
           }
         }
+        
+        int damage(int atk){
+          HP -= atk;
+          if(HP<=0){
+            POS.i = 1000;
+            POS.j = 1000;
+            return 0;
+          }
+          return 1;
+        }
 };
 
+int has_monster(int, int);
+Hero* get_monster(int, int);
+
+extern Position camH;
+extern Position camV;
+extern Hero hero;
+extern Hero monsters[100];
 #endif
