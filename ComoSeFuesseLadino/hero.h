@@ -7,64 +7,114 @@
 #define RANGER         0
 #define BARBARIAN      1
 #define WIZARD         2
+#define MONSTER         2
 
 //initial lifes
-#define R_INIT_HP      2
-#define B_INIT_HP      3
-#define W_INIT_HP      1
+#define R_INIT_HP      6
+#define B_INIT_HP      8
+#define W_INIT_HP      6
+#define M_INIT_HP      3
 
 //speed of actions
-#define SPD_RANGER     8
-#define SPD_BARBARIAN  6
-#define SPD_WIZARD     4
+#define SPD_RANGER     12
+#define SPD_BARBARIAN  10
+#define SPD_WIZARD     9
+#define SPD_MONSTER    9
 
-#define UP            1 
+#define UP            0 
+#define LEFT          1  
 #define DOWN          2 
-#define LEFT          3  
-#define RIGHT         4 
+#define RIGHT         3 
 
 #define num_monster   30
 
-#define TICKET        10
+#define TICKET        15
 class Position
 {
-    public:
-        int i;
-        int j;
-        int d;
+public:
+  int i;
+  int j;
+  int d;
 };
 
-class Hero
-{
-    public:
-        Position POS;
-        int HP, ATK, HERO_CLASS, LVL, SPD, TKT, KILLS;
-        Hero(int);
-        Hero();
-        
-        void setPos(int x, int y) {
-          if(!isColliding(x, y)) {
-            POS.i = x;
-            POS.j = y;
-          }
-        }
-        
-        int damage(int atk){
-          HP -= atk;
-          if(HP<=0){
-            POS.i = 1000;
-            POS.j = 1000;
-            return 0;
-          }
-          return 1;
-        }
+extern Position camH;
+extern Position camV;
+
+class Projetil {
+  public:
+    int SPD;
+    int ATK;
+    Position POS;
+    int TKT;
+    int A;
+    
+    Projetil() {
+      A = 0;
+    }
+};
+
+class Hero {
+public:
+  Position POS;
+  int HP, ATK, HERO_CLASS, LVL, SPD, TKT, KILLS;
+  Hero(int);
+  Hero();
+
+  int damage(int atk){
+    HP -= atk;
+    if(HP<=0){
+      POS.i = 1000;
+      POS.j = 1000;
+      return 0;
+    }
+    return 1;
+  }
+
+  void levelUp() {
+    if(HERO_CLASS==RANGER){
+      SPD += LVL/4;
+      HP  += R_INIT_HP * LVL/4;
+      ATK += LVL/3;
+      LVL++;
+    }
+    else if(HERO_CLASS==BARBARIAN){
+      SPD += LVL/6;
+      HP  += R_INIT_HP * (LVL+1)/4;
+      ATK += LVL/3;
+      LVL++;
+    }
+    else if(HERO_CLASS==WIZARD){
+      SPD += LVL/6;
+      HP  += R_INIT_HP * LVL/4;
+      ATK += LVL/3;
+      LVL++;
+    }
+    else if(HERO_CLASS==MONSTER){
+      SPD += LVL/6;
+      HP  += R_INIT_HP * LVL/4;
+      ATK += LVL/2;
+      LVL++;
+    }
+  }
+
+  void checkLevel() {
+    if(KILLS%(LVL*4) == 0) {
+      levelUp();
+    }
+  }
+
+  void setPos(int, int);
 };
 
 int has_monster(int, int);
 Hero* get_monster(int, int);
 
-extern Position camH;
-extern Position camV;
-extern Hero hero;
 extern Hero monsters[100];
+extern Projetil projeteis[200];
+extern int num_projeteis;
+extern Hero hero;
+
 #endif
+
+
+

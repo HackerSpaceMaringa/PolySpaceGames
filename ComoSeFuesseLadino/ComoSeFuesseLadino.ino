@@ -180,7 +180,10 @@ void atackPos(int i, int j, int dano, char tile) {
   Hero* monster = get_monster(i, j);
   print_screen(i-camV.i, j - camH.i, tile);
   if (monster) {
-    if(!monster->damage(dano)) hero.KILLS++;
+    if(!monster->damage(dano)) {
+      hero.KILLS++;
+      hero.checkLevel();
+    }
   }
 
   if(hero.POS.i == i && hero.POS.j ==  j)
@@ -227,6 +230,46 @@ void atack(Hero h) {
   }
 }
 
+void atack_projetil(Hero h) {
+  for(int i = 0; i < 200; i++) {
+    if(projeteis[i].A == 0) {
+      if(h.HERO_CLASS == RANGER) {
+        projeteis[i].SPD = 14;
+      } 
+      else {
+        projeteis[i].SPD = 13;
+      }
+
+      projeteis[i].ATK = hero.ATK * 2;
+      projeteis[i].TKT = TICKET - projeteis[i].SPD;
+
+      tv.select_font(fontRL);
+      if (h.POS.d == LEFT) {
+        projeteis[i].POS   = h.POS;
+        projeteis[i].POS.j -= 1;
+        atackPos(h.POS.i, h.POS.j - 1, h.ATK, char(142));
+      } 
+      else if (h.POS.d == RIGHT) {
+        projeteis[i].POS   = h.POS;
+        projeteis[i].POS.j += 1;
+        atackPos(h.POS.i, h.POS.j + 1, h.ATK, char(140));
+      } 
+      else if (h.POS.d == UP) {
+        projeteis[i].POS   = h.POS;
+        projeteis[i].POS.i -= 1;
+        atackPos(h.POS.i - 1, h.POS.j, h.ATK, char(139));
+      } 
+      else if (h.POS.d == DOWN) {
+        projeteis[i].POS   = h.POS;
+        projeteis[i].POS.i += 1;       
+        atackPos(h.POS.i + 1, h.POS.j, h.ATK, char(141));
+      }
+      projeteis[i].A = 1;
+      return;
+    }  
+  }
+}
+
 void control() {
   btns = player1.getButtons();
   if(btns & BTN_A){
@@ -255,7 +298,12 @@ void control() {
     atack(hero);
   }
   if(btns & BTN_X){
-    cleave_atk(hero);
+    if(hero.HERO_CLASS == BARBARIAN) {
+      cleave_atk(hero);
+    } 
+    else {
+      atack_projetil(hero);
+    }
   }
   if(btns & BTN_L){
     print_sheet();
@@ -279,7 +327,7 @@ void init_monsters() {
   for(int i = 0; i < num_monster; i++) {
     monsters[i].POS.i = random(4, sizeY);
     monsters[i].POS.j = random(4, sizeX);
-    if(get_position(monsters[i].POS.i, monsters[i].POS.j) == '#') {
+    if(get_position(monsters[i].POS.i, monsters[i].POS.j) == char(144)) {
       i--;
       continue;
     }
@@ -298,7 +346,7 @@ Position runForest(Hero h, int dir, int hide) {
   float min = 999999999;
   Position aux;
 
-  if(get_position(h.POS.i+1, h.POS.j) != '#') {
+  if(get_position(h.POS.i+1, h.POS.j) != char(144)) {
     aux.i = h.POS.i+1;
     aux.j = h.POS.j;
     float peso = (dir*distance(aux, hero.POS)) - hide* (!canSee(aux.i, aux.j, hero.POS.i, hero.POS.j));
@@ -310,7 +358,7 @@ Position runForest(Hero h, int dir, int hide) {
     }
   }
 
-  if(get_position(h.POS.i-1, h.POS.j) != '#') {
+  if(get_position(h.POS.i-1, h.POS.j) != char(144)) {
     aux.i = h.POS.i-1;
     aux.j = h.POS.j;
     float peso = (dir*distance(aux, hero.POS)) - hide* (!canSee(aux.i, aux.j, hero.POS.i, hero.POS.j));
@@ -322,7 +370,7 @@ Position runForest(Hero h, int dir, int hide) {
     }
   }
 
-  if(get_position(h.POS.i, h.POS.j + 1) != '#') {
+  if(get_position(h.POS.i, h.POS.j + 1) != char(144)) {
     aux.i = h.POS.i;
     aux.j = h.POS.j + 1;
     float peso = (dir*distance(aux, hero.POS)) - hide* (!canSee(aux.i, aux.j, hero.POS.i, hero.POS.j));
@@ -334,7 +382,7 @@ Position runForest(Hero h, int dir, int hide) {
     }
   }
 
-  if(get_position(h.POS.i, h.POS.j - 1) != '#') {
+  if(get_position(h.POS.i, h.POS.j - 1) != char(144)) {
     aux.i = h.POS.i;
     aux.j = h.POS.j - 1;
     float peso = (dir*distance(aux, hero.POS)) - hide* (!canSee(aux.i, aux.j, hero.POS.i, hero.POS.j));
@@ -351,57 +399,58 @@ Position runForest(Hero h, int dir, int hide) {
 
 void bilheteria_monstros(){
   for (int i= 0;i<num_monster;i++){
-    if(true){
+    if(monsters[i].TKT <= 0){
       IA1Monsters(monsters[i]);
-      monsters[i].TKT = TICKET / monsters[i].SPD;
-    }else{
+      monsters[i].TKT = TICKET - monsters[i].SPD;
+    }
+    else{
       monsters[i].TKT--;
     }  
   }
 }
 
-void IA1Monsters(Hero m) {
-  
-    if(distance(m.POS, hero.POS) == 1) {
-      if(is_in_cam(m.POS.j, m.POS.i) && !canSee(hero.POS.i, hero.POS.j, m.POS.i, m.POS.j)) {
-        if(m.POS.i == hero.POS.i) {
-          if (m.POS.j < hero.POS.j)
-            m.POS.d = RIGHT;
-          else
-            m.POS.d = LEFT;
-        } 
-        else if(m.POS.j == hero.POS.j) {
-          if (m.POS.i < hero.POS.i)
-            m.POS.d = DOWN;
-          else
-            m.POS.d = UP;
-        }
-        atack(m);
+void IA1Monsters(Hero& m) {
+  if(distance(m.POS, hero.POS) == 1) {
+    if(is_in_cam(m.POS.j, m.POS.i) && !canSee(hero.POS.i, hero.POS.j, m.POS.i, m.POS.j)) {
+      if(m.POS.i == hero.POS.i) {
+        if (m.POS.j < hero.POS.j)
+          m.POS.d = RIGHT;
+        else
+          m.POS.d = LEFT;
+      } 
+      else if(m.POS.j == hero.POS.j) {
+        if (m.POS.i < hero.POS.i)
+          m.POS.d = DOWN;
+        else
+          m.POS.d = UP;
       }
-    } 
-    else if(!canSee(hero.POS.i, hero.POS.j, m.POS.i, m.POS.j)){
-      m.POS = runForest(m, 1, 4);
-    } 
-    else {
-      int act = random(0, 5);
-      if (act == UP) { 
-        m.POS.d = UP;
-        m.setPos(m.POS.i - 1, m.POS.j);
-      }
-      if (act == DOWN) { 
-        m.POS.d = DOWN;
-        m.setPos(m.POS.i + 1, m.POS.j);
-      }
-      if (act == LEFT) { 
-        m.POS.d = LEFT;
-        m.setPos(m.POS.i, m.POS.j - 1);
-      }
-      if (act == RIGHT) { 
-        m.POS.d = RIGHT;
-        m.setPos(m.POS.i, m.POS.j + 1);
-      }
+      atack(m);
     }
-  
+  } 
+  else if(!canSee(hero.POS.i, hero.POS.j, m.POS.i, m.POS.j)) {
+    Position np = runForest(m, 1, 4);
+    m.setPos(np.i, np.j);
+  } 
+  else {
+    int act = random(0, 5);
+    if (act == UP) { 
+      m.POS.d = UP;
+      m.setPos(m.POS.i - 1, m.POS.j);
+    }
+    if (act == DOWN) { 
+      m.POS.d = DOWN;
+      m.setPos(m.POS.i + 1, m.POS.j);
+    }
+    if (act == LEFT) { 
+      m.POS.d = LEFT;
+      m.setPos(m.POS.i, m.POS.j - 1);
+    }
+    if (act == RIGHT) { 
+      m.POS.d = RIGHT;
+      m.setPos(m.POS.i, m.POS.j + 1);
+    }
+  }
+
 }
 
 void print_game_over(){
@@ -414,7 +463,48 @@ void print_game_over(){
   setup();
 }
 
+
+
+void move_projeteis() {
+  for(int i = 0; i < 200; i++) {
+    if(projeteis[i].A == 1) {
+     
+      
+      projeteis[i].TKT--;
+      if(projeteis[i].TKT <= 0) {
+        projeteis[i].TKT = TICKET - projeteis[i].SPD;
+        
+        if(is_in_cam(projeteis[i].POS.j, projeteis[i].POS.i)){
+          if (projeteis[i].POS.d == LEFT) {
+            projeteis[i].POS.j -= 1;
+            atackPos(projeteis[i].POS.i, projeteis[i].POS.j, projeteis[i].ATK, char(142));
+          } 
+          else if (projeteis[i].POS.d == RIGHT) {
+            projeteis[i].POS.j += 1;
+            atackPos(projeteis[i].POS.i, projeteis[i].POS.j, projeteis[i].ATK, char(140));
+          } 
+          else if (projeteis[i].POS.d == UP) {
+            projeteis[i].POS.i -= 1;
+            atackPos(projeteis[i].POS.i, projeteis[i].POS.j, projeteis[i].ATK, char(139));
+          } 
+          else if (projeteis[i].POS.d == DOWN) {
+            projeteis[i].POS.i += 1;       
+            atackPos(projeteis[i].POS.i, projeteis[i].POS.j, projeteis[i].ATK, char(141));
+          }
+          
+           if(isColliding(projeteis[i].POS.i, projeteis[i].POS.j) || has_monster(projeteis[i].POS.i, projeteis[i].POS.j) == 1) {
+             projeteis[i].A = 0;
+             break;
+          }
+        } else projeteis[i].A = 0; 
+      }  
+    }
+  }
+}
+
 void setup(){
+  num_projeteis = 0;
+
   randomSeed(analogRead(0));
   tv.begin(NTSC);
   tv.select_font(font6x8);
@@ -430,16 +520,23 @@ void setup(){
 }
 
 void loop(){
-  bilheteria_monstros();
-  if(hero.TKT==0){
+  move_projeteis();
+  hero.TKT--;
+  if(hero.TKT <= 0){
     hero.TKT = TICKET - hero.SPD;
     control();
   }
+  bilheteria_monstros();
   moveCam();
   print_field();
   if(hero.HP==0) print_game_over();
   //tv.delay(250);
 }
+
+
+
+
+
 
 
 

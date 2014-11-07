@@ -15,10 +15,10 @@ byte is_out_of_borders(byte x, byte y) {
 }
 
 char get_position(byte x, byte y) {
-  if(is_out_of_borders(x, y)) return '#'; 
+  if(is_out_of_borders(x, y)) return char(144); 
   int pos = calculate_pos(x, y);
   if((m[pos/8] >> pos%8)%2 == 0) return '.';
-  else return '#';
+  else return char(144);
 }
 
 void set_position(byte x, byte y, byte value) {
@@ -102,7 +102,7 @@ int canSee(int x0, int y0, int x1, int y1) {
   for(;;){
     if (x0==x1 && y0==y1) break;
     
-    if(get_position(x0, y0) == '#') 
+    if(get_position(x0, y0) == char(144)) 
       return 1;
 
     e2 = err;
@@ -113,7 +113,7 @@ int canSee(int x0, int y0, int x1, int y1) {
 }
 
 int isColliding(byte x, byte y) {
-  return get_position(x, y) == '#';
+  return get_position(x, y) == char(144);
 }
 
 void print_map() {
