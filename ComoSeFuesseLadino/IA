@@ -1,0 +1,61 @@
+
+Chamar IAs sempre quando for turno do monstro
+
+float distancia(POS a, POS b);
+
+correr(int dir, int esconder):
+  POS p;
+  float min = 999999;
+
+  se (x+1, y) não é parede 
+  |  float peso = (dir*distancia((x+1, y), posHeroi))
+  |                    + esconder se dessa possição não da pra ver o heroi
+  |  se (peso < min)
+  |  |  p   = (x+1, y)
+  |  |  min = peso
+  return p;
+
+IA 1 barbaro:
+  se consegue_atacar_heroi então:
+  |  ataque
+  else se consegue_ver_heroi então:
+  |  correr(1, 4);
+  se não:
+  |  mova aleatoriamente
+
+IA 1 ranger:
+  se distancia até heroi é curta:
+  |  correr(-1, 4) 
+  se consegue_atacar_heroi então:
+  |  ataque
+  else se consegue_ver_heroi então:
+  |  correr(1, 4);
+  se não:
+  |  mova aleatoriamente
+
+
+IA 2:
+  se vida > 10% da vida total
+  |   IA1();
+  else 
+  |   se consegue_ver_heroi então:
+  |   | correr(-1, -4) 
+  |   se não
+  |   | mova aleatoriamente 
+
+IA 3:
+  se vida > 10% da vida total
+    se consegue_ver_heroi então:
+    |  IA1();
+    se não, se conseguer ver algum monstro que esta agressivo
+    |  correr(1, 4)
+    else
+    |  mova aleatoriamente
+  else
+    se consegue_ver_heroi então:
+    |  correr(-1, -4) 
+    se não
+    |  mova para perto de outro monstro 
+
+BOSS:
+  igual IA 2, mas quando com pouca vida sumona 4 monstros
