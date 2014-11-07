@@ -17,7 +17,7 @@ Hero monsters[100];
 
 Position camH;
 Position camV;
-
+PROGMEM const char history[] = "Aqui vosmece encontrara o mundo de RUP, que foi d7minado por um Diagrametico TROLL.\n Jose, voce foi REQUISITADO a libertar esse mundo e por fim a todo esse desperdicio de papel...PRESS [R]";
 void init_cam() {
   camH.i = 0;
   camH.j = 21;
@@ -62,21 +62,55 @@ int has_monster(int x, int y){
   return 0;
 }
 
+void print_sheet(){
+  tv.clear_screen();
+  tv.draw_rect(0,0,75,35,WHITE);
+  tv.draw_line(0,12,75,12,WHITE);
+  tv.draw_rect(0,35,75,35,WHITE);
+  tv.set_cursor(2,4);
+  if(hero.HERO_CLASS==RANGER) tv.println("RANGER");
+  else if(hero.HERO_CLASS==BARBARIAN) tv.println("BARBARIAN");
+  else if(hero.HERO_CLASS==WIZARD) tv.println("WIZARD");
+   tv.set_cursor(2,17);
+   tv.print("NAME : ");
+   tv.println("JOSE");
+   tv.set_cursor(2,25);
+   tv.print("LVL  : ");
+   tv.println(hero.LVL);
+   tv.set_cursor(2,42);
+   tv.print("HP   : ");
+   tv.println(hero.HP);
+   tv.set_cursor(2,50);
+   tv.print("SPD  : ");
+   tv.println(hero.SPD);
+   tv.set_cursor(2,58);
+   tv.print("ATK  : ");
+   tv.println(hero.ATK);
+   tv.set_cursor(73,81);
+   
+   tv.print("PRESS [R]");
+   btns = player1.getButtons();
+   while(!(btns & BTN_R)) btns = player1.getButtons();
+   //print_field();
+}
 
 void print_field(){
-  tv.select_font(fontRL);
+  //tv.select_font(fontRL);
+  tv.select_font(font6x8);
   //tv.clear_screen();
   for(byte i = camV.i; i < camV.j; i++) {
     for(byte j = camH.i; j < camH.j; j++) {
       if(hero.POS.i == i && hero.POS.j == j)
-          print_screen(i-camV.i, j-camH.i, (char(128 + hero.POS.d)));
+          //print_screen(i-camV.i, j-camH.i, (char(128 + hero.POS.d)));
+          print_screen(i-camV.i, j-camH.i, '@');
       else
         if(canSee(hero.POS.i, hero.POS.j, i, j) != 1){
           if(!has_monster(i,j)){
             print_screen(i-camV.i, j-camH.i, (get_position(i, j)));
           }else
-          print_screen(i-camV.i, j-camH.i, char(134));
-        }//tv.print(get_position(i, j));
+          //print_screen(i-camV.i, j-camH.i, char(134));
+          print_screen(i-camV.i, j-camH.i, '%');
+        }
         else
           print_screen(i-camV.i, j-camH.i, ' ');
     }
@@ -99,34 +133,25 @@ int select_class(){
    btns = player1.getButtons();  
  }
  tv.clear_screen();
+ tv.println("Seja Bem-Vindo,");
  if(btns & BTN_X){
    Hero n_hero(RANGER);
    hero = n_hero;
    tv.println("RANGER");
-   tv.println(hero.HP);
-   tv.println(hero.HERO_CLASS);
-   tv.println(hero.LVL);
-   tv.println(hero.ATK);
  }else if(btns & BTN_B){
    Hero n_hero(BARBARIAN);
    hero = n_hero;
-   tv.println("BARBARIAN");
-   tv.println(hero.HP);
-   tv.println(hero.HERO_CLASS);
-   tv.println(hero.LVL);
-   tv.println(hero.ATK);   
+   tv.println("BARBARIAN");   
  }else if(btns & BTN_Y){
    Hero n_hero(WIZARD);
    hero = n_hero;
    tv.println("WIZARD");
-   tv.println(hero.HP);
-   tv.println(hero.HERO_CLASS);
-   tv.println(hero.LVL);
-   tv.println(hero.ATK);
-
  }
- 
-  tv.delay(5000);
+  tv.println("");
+  tv.printPGM(history);
+  btns = player1.getButtons();
+  while(!((btns & BTN_R) || (btns & BTN_L))) btns = player1.getButtons();
+  //tv.delay(8000);
   tv.clear_screen();
  
  return 0;
@@ -135,8 +160,11 @@ int select_class(){
 
 int print_intro() {
   tv.set_cursor(20, 30);
-  tv.select_font(fontRL);
+  //tv.select_font(fontRL);
+  tv.select_font(font8x8);
+  tv.draw_circle(tv.hres()/2,tv.vres()/2,tv.vres()/3,WHITE);
   tv.println(" Powered by");
+  tv.set_cursor(6, 38);
   tv.println("Fosforos Parana");
   tv.select_font(font6x8);
   tv.delay(4000);
@@ -185,9 +213,9 @@ void control() {
     }if(btns & BTN_X){
 
     }if(btns & BTN_L){
-
+      print_sheet();
     }if(btns & BTN_R){
-
+      //print_sheet();
     }if(btns & BTN_START){
 
     }if(btns & BTN_SELECT){

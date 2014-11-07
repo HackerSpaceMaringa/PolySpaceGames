@@ -51,19 +51,8 @@ Hero::Hero() {
     
 }
 
-/*void moviment(Hero hero, byte direction)
-{
-    if(direction==UP)
-    {
-    }
-    else if(direction==DOWN)
-    {
-    }
-    else if(direction==LEFT)
-    {
-    }
-    else if(direction==RIGHT)
-    {
-    }
-    
-}*/
+int Hero::damage(int atk){
+  HP -= atk;
+  if(HP <= 0) return 0;
+  else return 1;
+}

@@ -39,6 +39,8 @@ class Hero
         Hero(int);
         Hero();
         
+        int damage(int);
+        
         void setPos(int x, int y) {
           if(!isColliding(x, y)) {
             POS.i = x;
