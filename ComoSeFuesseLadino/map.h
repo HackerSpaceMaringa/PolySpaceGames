@@ -16,4 +16,6 @@ int canSee(int, int, int, int);
 
 int isColliding(byte, byte);
 
+void clean_map();
+
 #endif

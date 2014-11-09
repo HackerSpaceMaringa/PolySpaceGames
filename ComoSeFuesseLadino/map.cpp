@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <Arduino.h>
+#include "avr/pgmspace.h"
 #include "map.h"
 
 char m[((sizeX-2)*(sizeY-2))/8];
@@ -30,12 +31,19 @@ void set_position(byte x, byte y, byte value) {
     m[pos/8] = m[pos/8] & (255 - (1 << pos%8));
 }
 
+void clean_map() {
+  for(byte i=0; i < sizeX; i++) {
+    for(byte j=0; j < sizeY; j++) {
+      set_position(i, j, 1);
+    }
+  }
+}
+
 class Room {
   public:
     int x, y;
     int h, w;
 };
-
 
 int does_collide(Room room, Room *rooms, int num_rooms) {
   for (int i = 0; i < num_rooms; i++) {

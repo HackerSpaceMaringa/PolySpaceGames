@@ -1,9 +1,12 @@
 #include "hero.h"
 
+int  num_monster = 40;
+
 Position camH;
 Position camV;
+
 //Construtor Hero
-Hero::Hero(int h_class) {
+Hero::Hero(byte h_class) {
   POS.i = 20;
   POS.j = 20;
   POS.d = 0;
@@ -13,21 +16,28 @@ Hero::Hero(int h_class) {
   if(HERO_CLASS==RANGER){
     SPD = SPD_RANGER;
     HP  = R_INIT_HP;
+    MP  = R_INIT_MP;
+    ATK++;
   }
   else if(HERO_CLASS==BARBARIAN){
     SPD = SPD_BARBARIAN;
     HP  = B_INIT_HP;
+    MP  = B_INIT_MP;
+    ATK += 2;
   }
   else if(HERO_CLASS==WIZARD){
     SPD = SPD_WIZARD;
     HP  = W_INIT_HP;
+    MP  = W_INIT_MP;
     ATK++;
   }
 
   TKT = TICKET - SPD;
   ATK++;
   LVL = 1;
-
+  MAX_HP = HP;
+  MAX_MP = MP;
+  AGRS = 0;
 }
 
 Hero::Hero() {
@@ -45,10 +55,11 @@ Hero::Hero() {
   TKT = TICKET - SPD;
   ATK++;
   LVL = 1;
-
+  MAX_HP = HP;
+  AGRS = 0;
 }
 
-int has_monster(int x, int y){
+int has_monster(byte x, byte y){
   for(int i = 0; i< num_monster; i++){
     if(monsters[i].POS.i == x && monsters[i].POS.j == y){
       return 1;
@@ -57,7 +68,7 @@ int has_monster(int x, int y){
   return 0;
 }
 
-Hero* get_monster(int x, int y){
+Hero* get_monster(byte x, byte y){
   for(int i = 0; i< num_monster; i++){
     if(monsters[i].POS.i == x && monsters[i].POS.j == y){
       return &monsters[i];
@@ -69,11 +80,9 @@ Hero* get_monster(int x, int y){
 Hero hero(1);
 Hero monsters[100];
 Projetil projeteis[200];
-int num_projeteis;
+byte num_projeteis;
 
-
-
-void Hero::setPos(int x, int y) {
+void Hero::setPos(byte x, byte y) {
   if(!(isColliding(x, y) || has_monster(x, y) == 1)) {
     if(!(hero.POS.i == x && hero.POS.j == y)) {
       POS.i = x;
