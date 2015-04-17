@@ -512,7 +512,7 @@ void control() {
       } 
       else if(hero.HERO_CLASS == WIZARD) {
         fire(hero.POS.i, hero.POS.j, hero.LVL+1);
-        print_msg("LIGHTING");
+        print_msg("LIGHTINING");
       }
       hero.MP--;
     }
@@ -657,7 +657,7 @@ Position runForest(Hero h, Hero hero, int dir, int hide) {
 
 byte is_ranger = 0;
 
-int respaw_count = 10;
+int respaw_count = 25;
 void bilheteria_monstros() {
   if(floor_state == 3 && num_monster < 100 ) {
     if(respaw_count != 0) {
@@ -667,7 +667,7 @@ void bilheteria_monstros() {
       int i = num_monster;
       num_monster++;
 
-      respaw_count = 10;
+      respaw_count = 25;
       monsters[i].POS.i = bau.i;
       monsters[i].POS.j = bau.j;
 
@@ -987,11 +987,13 @@ void closing_credits() {
   tv.print(" !\n\n\n\n");
   tv.select_font(font6x8);
   tv.delay(3000);
-  tv.println("   Criador por: \n");
+  tv.println("   Criado por: \n");
   tv.delay(3000);
   tv.println("Vanderson Rosario; e\n");
   tv.delay(3000);
   tv.println("Vinicius Cornieri ");
+  tv.delay(8000);
+  tv.println("Diogo Murata");
   tv.delay(8000);
   tv.clear_screen();
   while(1) tv.delay(1000);
@@ -1042,8 +1044,8 @@ void floor2() {
     clean_map();
     createRoom(4, sizeX/2, 15);
     for(;;){
-      portal.i = random(4, sizeY);
-      portal.j = random(4, sizeX);
+      portal.i = random(sizeY/2, sizeY);
+      portal.j = random(sizeX/2, sizeX);
       if(get_position(portal.i, portal.j) != char(144))
         break;
     }
@@ -1106,7 +1108,8 @@ void setup(){
   if(hero.HP != 0) 
    print_intro();
   select_class();
-
+  
+  //mode_gm();
   tv.delay(1000);
 }
 
@@ -1121,6 +1124,12 @@ void recover_mana() {
   } 
   else {
     mp_count--;
+  }
+}
+
+void mode_gm() {
+  for(int i = 0; i < 30; i++) {
+     hero.levelUp();
   }
 }
 

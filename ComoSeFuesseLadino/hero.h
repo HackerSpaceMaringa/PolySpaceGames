@@ -10,15 +10,15 @@
 #define MONSTER        2
 
 //initial lifes
-#define R_INIT_HP      40
-#define B_INIT_HP      65
+#define R_INIT_HP      45
+#define B_INIT_HP      70
 #define W_INIT_HP      35
 #define M_INIT_HP      4
 
 //initial mana
-#define R_INIT_MP      10
-#define B_INIT_MP      9
-#define W_INIT_MP      14
+#define R_INIT_MP      13
+#define B_INIT_MP      12
+#define W_INIT_MP      15
 
 
 //speed of actions
@@ -117,7 +117,7 @@ public:
   }
 
   byte checkLevel() {
-    if(KILLS%(LVL*6) == (LVL*6)-1) {
+    if(KILLS%(LVL*5) == (LVL*5)-1) {
       levelUp();
       return 1;
     }
