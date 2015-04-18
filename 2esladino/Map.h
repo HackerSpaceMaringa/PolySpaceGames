@@ -5,7 +5,7 @@
 
 class Map {
   private:
-    LinkedList actor<Actor&>;
+    LinkedList<Actor*> actors;
     int height, width;
     char *m, *mLum;
 
@@ -16,9 +16,11 @@ class Map {
       return position;
     }
 
-    void getPositionFromMap(int p, Position p) {
-      p.setX(p / height);
-      p.setY(p % height);
+    Position getPositionFromMap(int p) {
+	Position pos;
+      pos.setX(p / height);
+      pos.setY(p % height);
+	return pos;
     }
 
   public:
@@ -39,6 +41,6 @@ class Map {
     char getLuminosity(Position p) {
       return mLum[getMapPosition(p)];
     }
-}
+};
 
 #endif

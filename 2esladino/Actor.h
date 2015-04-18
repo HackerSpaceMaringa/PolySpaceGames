@@ -4,7 +4,7 @@
 #include "Position.h"
 
 enum SizeType {
-  unit, small, medium, large;
+  unit, small, medium, large
 };
 
 class Actor {
@@ -12,8 +12,6 @@ class Actor {
     Position pos;
     SizeType size;
     bool visible, colidable;
-
- 
   
   public:
     Actor(Position P, SizeType S) {
@@ -56,10 +54,10 @@ class Actor {
       colidable = C;
     }
 
-    void hasColided(Actor &A) {
-      return isColidable() && A.getPosition().equal(getPosition) 
+    bool hasColided(Actor &A) {
+      return isColidable() && A.getPosition().equal(getPosition()) 
         && A.isColidable(); 
     }
-}
+};
 
 #endif

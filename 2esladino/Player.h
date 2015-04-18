@@ -1,87 +1,86 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-
-#define unsigned int uint
+#include "Actor.h"
 
 enum Job {
-  Ladino, Trombadinha;
+  Ladino
 };
 
 class Attributes {
   private:
-    uint HP;
-    uint MP;
-    uint stamina;
+    unsigned HP;
+    unsigned MP;
+    unsigned stamina;
 
-    uint STR;
-    uint DEX;
-    uint CON;
-    uint WIS;
-    uint INT;
-    uint LCK;
+    unsigned STR;
+    unsigned DEX;
+    unsigned CON;
+    unsigned WIS;
+    unsigned INT;
+    unsigned LCK;
   public:
     
-    void doDamage(uint dmg) {
+    void doDamage(unsigned dmg) {
       if (HP < dmg)
         HP = 0;
       else
         HP -= dmg;
     }
 
-    void doHeal(uint h) {
+    void doHeal(unsigned h) {
       HP += h;
       if (HP > getMaxHP()) 
         HP = getMaxHP();
     }
 
-    void reduceMP(uint d) {
+    void reduceMP(unsigned d) {
       if (MP >= d)
         MP -= d;
     }
 
-    void increaseMP(uint h) {
+    void increaseMP(unsigned h) {
       MP += h;
       if (MP > getMaxMP()) 
         MP = getMaxMP();
     }
 
-    uint getMaxHP() {
+    unsigned getMaxHP() {
       return CON * 100;
     }
 
-    uint getMaxMP() {
+    unsigned getMaxMP() {
       return INT * 100;
     }
 
-    uint getHP() {
+    unsigned getHP() {
       return HP;
     }
 
-    uint getMP() {
+    unsigned getMP() {
       return MP;
     }
 
-    uint getStr() {
+    unsigned getStr() {
       return STR;
     }
 
-    uint getDex() {
+    unsigned getDex() {
       return DEX;
     }
 
-    uint getCon() {
+    unsigned getCon() {
       return CON;
     }
 
-    uint getInt() {
+    unsigned getInt() {
       return INT;
     }
 
-    uint getWis() {
+    unsigned getWis() {
       return WIS;
     }
 
-    uint getLck() {
+    unsigned getLck() {
       return LCK;
     }
 
@@ -112,11 +111,11 @@ class Attributes {
 
 class Player : public Actor {
   private:
-    string name;
-    uint level;
-    uint xp;
-    LinkedList<Entity&> bag;
-    uint bagSize;
+    char* name;
+    unsigned level;
+    unsigned xp;
+    LinkedList<Entity*> bag;
+    unsigned bagSize;
     Job job;
     Attributes attr;
 
@@ -125,8 +124,10 @@ class Player : public Actor {
         level++;
       }
     }
+
   public:
-    Player(string name, Job job) {
+    Player(char* name, Job job, Position P) 
+	: Actor(P, unit, true, true) {
       this->name = name;
       this->job = job;
       // TODO! DO ATTRIBUTES SETS
@@ -134,7 +135,7 @@ class Player : public Actor {
       level = 1;
     }
 
-    void gainXP(uint xp) {
+    void gainXP(unsigned xp) {
       this->xp += xp;
       updateLevel();
     }
@@ -144,7 +145,11 @@ class Player : public Actor {
     }
 
     Entity& getItemInBag(int i) {
-      return bag.get(i);
+      return *bag.get(i);
+    }
+
+    void insertItemInBag(Entity *item) {
+      bag.add(item);
     }
 };
 

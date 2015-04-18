@@ -3,14 +3,15 @@
 
 #include "Actor.h"
 #include "LinkedList.h"
+#include "Event.h"
 
 enum IAType {
-  easy, normal, hard;
+  easy, normal, hard
 };
 
 class Entity : Actor {
   private:
-    LinkedList<Events&> events;
+    LinkedList<Event*> events;
     IAType iaType;
 
   public:
@@ -22,12 +23,12 @@ class Entity : Actor {
       return iaType;
     }
 
-    void addEvent(Event &E) {
+    void addEvent(Event *E) {
       events.add(E);
     }
 
     Event& getEvent(int i) {
-      return events.get(i);
+      return *events.get(i);
     }
 
     int getNumEvents() {
